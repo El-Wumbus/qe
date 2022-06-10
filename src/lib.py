@@ -10,6 +10,7 @@ import os.path
 import shutil
 import errno
 from contextlib import closing
+import random
 
 class stdfile:
 
@@ -108,7 +109,17 @@ class io:
 
 
 class crypto:
-
+        
+    def genSalt():
+        ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        chars = []
+        buffer = ""
+        for i in range(64):
+            chars.append(random.choice(ALPHABET))
+        buffer.join(chars)
+        return(buffer)
+        
+        
     def encryptBytesToFile_AES(data, file: str, password: str):
         """
         It takes in a byte string, a file name, and a password, and then it encrypts the byte string
@@ -121,8 +132,7 @@ class crypto:
         :param password: The password that will be used to generate the key
         """
         # Converting the hex string to a byte string.
-        salt = binascii.unhexlify(
-            '8217aca5447b7c87664bdc988e8704fdbbdefc02ad4a2693f25449deff151d08')
+        salt = binascii.unhexlify(crypto.genSalt())
 
         # Using the PBKDF2 algorithm to generate a key from the password.
         password = password.encode("utf8")
@@ -150,8 +160,7 @@ class crypto:
         :return: The decrypted data.
         """
         # Converting the hex string to a byte string.
-        salt = binascii.unhexlify(
-            '8217aca5447b7c87664bdc988e8704fdbbdefc02ad4a2693f25449deff151d08')
+        salt = binascii.unhexlify(crypto.genSalt())
         # It's using the PBKDF2 algorithm to generate a key from the password.
         password = password.encode("utf8")
         key = pbkdf2_hmac("sha256", password, salt, 60000, 32)
