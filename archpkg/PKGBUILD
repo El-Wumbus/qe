@@ -1,6 +1,6 @@
 # Maintainer: Aidan Neal <squidwardnose4507@gmail.com>
 pkgname='qe'
-pkgver=1
+pkgver=r1.re9c3960.
 pkgrel=1
 pkgdesc="quick encryption is a program that encrypts(with 256bit-AES) and decrypts files in a single command by usage of a passphrase."
 arch=("x86_64")

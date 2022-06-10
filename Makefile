@@ -2,6 +2,7 @@ all: build
 
 build:
 	pyinstaller --onefile src/qe.py
+	mkdir -p bin
 	mv dist/qe "bin/qe-linux"
 
 sums:
