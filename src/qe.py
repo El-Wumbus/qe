@@ -120,7 +120,7 @@ def main():
     # Checking if the user has passed the decrypt or unencrypt argument. If they have, it
     #         checks if the number of arguments is less than 2. If it is, it prints an error message.
     #         If it isn't, it calls the decrypt function with the filename as the argument.
-    if args[0] == "decrypt" or args[0] == "unencrypt":
+    elif args[0] == "decrypt" or args[0] == "unencrypt":
         # Checking if the number of arguments is less than 2. If it is, it prints an error message.
         if argsc < 2:
             io.ERR(
@@ -130,7 +130,8 @@ def main():
         filename = args[1]
         if decrypt(filename) == 1:
             io.ERR("Decrypting failed! Password may be incorrect.", 1)
-
+    else:
+        io.ERR(f"function {args[0]} not recognized",1)
 
 if __name__ == "__main__":
    sys.exit(main())

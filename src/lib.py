@@ -111,6 +111,10 @@ class io:
 class crypto:
         
     def genSalt():
+        """
+        It generates a random string of 64 characters from the alphabet
+        :return: A string of 64 random characters.
+        """
         ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         chars = []
         buffer = ""
