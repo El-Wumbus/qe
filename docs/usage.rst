@@ -1,7 +1,7 @@
 Usage
 =====
 
-This program has two functions: ``encrypt`` and ``decrypt``. 
+This program has four functions: ``encrypt``, ``sencrypt``, ``decrypt``, and ``sdecrypt``. 
 
 encrypt
 *******
@@ -22,6 +22,21 @@ Example:
 
    qe encrypt "$HOME/.zshrc"
 
+sencrypt
+********
+
+This function takes two arguments.
+
+1. The file to encrypt.
+2. The password to encrypt the file with. 
+
+Example:
+~~~~~~~~
+
+.. code:: bash
+
+   qe sencrypt "$HOME/.zshrc" "3xamplepassw0rd"
+
 decrypt
 *******
 
@@ -40,3 +55,18 @@ Example:
 .. code:: bash
 
    qe decrypt "$HOME/.zshrc"
+
+sdecrypt
+********
+
+This function takes two arguments.
+
+1. The file to decrypt.
+2. The password to decrypt the file with. 
+
+Example:
+~~~~~~~~
+
+.. code:: bash
+
+   qe sdecrypt "$HOME/.zshrc" "3xamplepassw0rd"

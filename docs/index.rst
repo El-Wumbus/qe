@@ -14,7 +14,6 @@ qa's documentation!
    installation
    usage
    contribution
-   modules
 
 .. Indices and tables
 .. ==================

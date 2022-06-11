@@ -13,15 +13,16 @@ PROGRAM_NAME = "qe"
 # Installing the rich traceback module.
 install()
 
+
 def usage():
     """
     It prints the usage of the program
     """
     printf(
-        f"usage:: [bold #5865F2]{PROGRAM_NAME}[/] -- {PROGRAM_NAME} \[encrypt/decrypt] \[\"filename\"]")
+        f"usage:: [bold #5865F2]{PROGRAM_NAME}[/] \[encrypt/decrypt] \"filename\"")
 
 
-def encrypt(filename):
+def encrypt(filename, passwd=None):
     """
     It encrypts a file with a password
 
@@ -34,18 +35,19 @@ def encrypt(filename):
     if not os.path.isfile(filename):
         io.ERR(f"\"{filename}\" is not a file", 1)
 
-    # Getting the password from the user.
-    password = getpass(prompt="Enter a password for encryption: ")
+    # Checking if the password is None. If it is, it gets the password from the user.
+    if passwd == None:
+        passwd = getpass(prompt="Enter a password for encryption: ")
     # Opening the file in binary mode, reading the contents of the file, and then closing the file.
     file = open(filename, "rb")
     fileContents = file.read()
     file.close()
 
     # Encrypting the file contents with the password and then writing the encrypted data to the file.
-    crypto.encryptBytesToFile_AES(fileContents, filename, password)
+    crypto.encryptBytesToFile_AES(fileContents, filename, passwd)
 
 
-def decrypt(filename):
+def decrypt(filename, passwd=None):
     """
     It decrypts a file using a password
 
@@ -59,11 +61,15 @@ def decrypt(filename):
     if not os.path.isfile(filename):
         io.ERR(f"\"{filename}\" is not a file", 1)
 
-    # Getting the password from the user and then decrypting the file. If the decryption
-    #     fails, it returns 1.
-    password = getpass(prompt="Enter a password for decryption: ")
-    if crypto.decryptBytesFromFile_AES(filename, password) == None:
+    # Checking if the password is None. If it is, it gets the password from the user.
+    if passwd == None:
+        passwd = getpass(prompt="Enter a password for decryption: ")
+
+    # Checking if the decryption function returns None. If it does, it returns 1.
+    if crypto.decryptBytesFromFile_AES(filename, passwd) == None:
         return(1)
+    else:
+        return(0)
 
 
 def main():
@@ -75,14 +81,14 @@ def main():
     message. If it isn't, it calls the encrypt function with the filename as the argument. If the user
     hasn't passed the encrypt argument, it checks if the user has passed the decrypt or unencrypt
     argument. If they have, it checks if the number of arguments is less than 2. If it is, it prints an
-    error message. If it isn't, it calls the decrypt function with the filename as the argument.
+    error message. If it isn't, it calls the decrypt function with the filename as the argument. If the
+    user hasn't passed the decrypt or unencrypt argument, it prints
     :return: The return value is the exit code of the program.
     """
     # Getting the options and arguments passed by the user.
     try:
         opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
         argsc = len(args)
-
     # Catching the error that is thrown by the getopt module.
     except getopt.GetoptError as err:
         io.ERR("Getops Error: {err}", 2)
@@ -120,6 +126,7 @@ def main():
     # Checking if the user has passed the decrypt or unencrypt argument. If they have, it
     #         checks if the number of arguments is less than 2. If it is, it prints an error message.
     #         If it isn't, it calls the decrypt function with the filename as the argument.
+
     elif args[0] == "decrypt" or args[0] == "unencrypt":
         # Checking if the number of arguments is less than 2. If it is, it prints an error message.
         if argsc < 2:
@@ -128,10 +135,36 @@ def main():
 
         # Calling the decrypt function with the filename as the argument.
         filename = args[1]
-        if decrypt(filename) == 1:
+        if decrypt(filename):
             io.ERR("Decrypting failed! Password may be incorrect.", 1)
+
+    elif args[0] == "sdecrypt" or args[0] == "sunencrypt":
+        # Checking if the number of arguments is less than 2. If it is, it prints an error message.
+        if argsc < 3:
+            io.ERR(
+                f"Too few arguments for function [bold #5865F2]sdecrypt[/]", 2)
+
+        # Calling the decrypt function with the filename as the argument.
+        filename = args[1]
+        password = args[2]
+        if decrypt(filename, passwd=password):
+            io.ERR("Decrypting failed! Password may be incorrect.", 1)
+
+    elif args[0] == "sencrypt":
+        # Checking if the number of arguments is less than 2. If it is, it prints an error message.
+        if argsc < 2:
+            io.ERR(
+                f"Too few arguments for function [bold #5865F2]sencrypt[/]", 2)
+
+        # Calling the encrypt function with the filename as the argument.
+        filename = args[1]
+        password = args[2]
+        encrypt(filename, passwd=password)
+        return(0)
+    
     else:
-        io.ERR(f"function {args[0]} not recognized",1)
+        io.ERR(f"function {args[0]} not recognized", 1)
+
 
 if __name__ == "__main__":
-   sys.exit(main())
+    sys.exit(main())

@@ -134,9 +134,9 @@ class crypto:
         :type file: str
         :param password: The password that will be used to generate the key
         """
-        # Converting the hex string to a byte string.
+        # Get the salt
         salt = crypto.genSalt()
-
+        
         # Using the PBKDF2 algorithm to generate a key from the password.
         password = password.encode("utf8")
         key = pbkdf2_hmac("sha256", password, salt, 60000, 32)
@@ -162,22 +162,31 @@ class crypto:
         :param password: The password that will be used to generate the key
         :return: The decrypted data.
         """
-        # Opening the file in binary read mode, reading the nonce, tag, and ciphertext from the
-        # file, and then creating a cipher object with the key, AES.MODE_EAX, and the nonce.
+       
+        # It's opening the file in binary read mode, reading the salt, nonce, tag, and ciphertext from the
+        # file, and then creating a cipher object with the key, AES.MODE_EAX, and the nonce
         input_file = open(file, "rb")
         salt, nonce, tag, ciphertext = [input_file.read(x) for x in (64, 16, 16, -1)]
         
-        # It's using the PBKDF2 algorithm to generate a key from the password.
+        # Converting the password to a byte array.
         password = password.encode("utf8")
+        
+        # Using the PBKDF2 algorithm to generate a key from the password.
         key = pbkdf2_hmac("sha256", password, salt, 60000, 32)
-
+        
+        # Creating a cipher object with the key, AES.MODE_EAX, and the nonce.
         cipher = AES.new(key, AES.MODE_EAX, nonce)
+        
         try:
+            # Decrypting the ciphertext with the cipher object, and then it's verifying the tag.
             data = cipher.decrypt_and_verify(ciphertext, tag)
+           
+            # Writing the decrypted data to the file.
             output_file = open(file, "wb")
             output_file.write(data)
             output_file.close()
-            return(0)
+           
+            return(0) # Return Success
         except:
-            return(None)
+            return(1) # Return Failure
         
