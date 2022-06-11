@@ -5,3 +5,4 @@ qa.spec
 __pycache__
 bin
 tmp
+.zshrc
