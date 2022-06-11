@@ -117,10 +117,10 @@ class crypto:
         """
         ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         chars = []
-        buffer = ""
         for i in range(64):
             chars.append(random.choice(ALPHABET))
-        buffer.join(chars)
+        print(chars)
+        buffer = "".join(chars).encode('utf-8')
         return(buffer)
         
         
@@ -136,7 +136,7 @@ class crypto:
         :param password: The password that will be used to generate the key
         """
         # Converting the hex string to a byte string.
-        salt = binascii.unhexlify(crypto.genSalt())
+        salt = crypto.genSalt()
 
         # Using the PBKDF2 algorithm to generate a key from the password.
         password = password.encode("utf8")
@@ -149,7 +149,7 @@ class crypto:
         # Opening the file in binary write mode, writing the nonce, tag, and ciphertext to the
         # file, and then closing the file.
         output_file = open(file, "wb")
-        [output_file.write(x) for x in (cipher.nonce, tag, ciphertext)]
+        [output_file.write(x) for x in (salt, cipher.nonce, tag, ciphertext)]
         output_file.close()
 
     def decryptBytesFromFile_AES(file: str, password: str):
@@ -163,17 +163,16 @@ class crypto:
         :param password: The password that will be used to generate the key
         :return: The decrypted data.
         """
-        # Converting the hex string to a byte string.
-        salt = binascii.unhexlify(crypto.genSalt())
-        # It's using the PBKDF2 algorithm to generate a key from the password.
-        password = password.encode("utf8")
-        key = pbkdf2_hmac("sha256", password, salt, 60000, 32)
         # Opening the file in binary read mode, reading the nonce, tag, and ciphertext from the
         # file, and then creating a cipher object with the key, AES.MODE_EAX, and the nonce.
         input_file = open(file, "rb")
-        nonce, tag, ciphertext = [input_file.read(x) for x in (16, 16, -1)]
-        cipher = AES.new(key, AES.MODE_EAX, nonce)
+        salt, nonce, tag, ciphertext = [input_file.read(x) for x in (64, 16, 16, -1)]
+        
+        # It's using the PBKDF2 algorithm to generate a key from the password.
+        password = password.encode("utf8")
+        key = pbkdf2_hmac("sha256", password, salt, 60000, 32)
 
+        cipher = AES.new(key, AES.MODE_EAX, nonce)
         try:
             data = cipher.decrypt_and_verify(ciphertext, tag)
             output_file = open(file, "wb")

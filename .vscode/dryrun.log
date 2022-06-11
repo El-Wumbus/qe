@@ -1,0 +1,7 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/mnt/starship-vault/documents/Git/qe'
+pyinstaller --onefile src/qe.py
+mkdir -p bin
+mv dist/qe "bin/qe-linux"
+make: Leaving directory '/mnt/starship-vault/documents/Git/qe'
+ 
