@@ -1,8 +1,4 @@
-all: build
-
-build:
-	mkdir -p bin
-	mv src/qe.py "bin/qe"
+all: install
 
 sums:
 	$(shell sha256sum bin/qe* > bin/sha256sums)
@@ -13,7 +9,7 @@ clean:
 install: build
 	mkdir -p ${DESTDIR}${PREFIX}/usr/bin
 	mkdir -p ${DESTDIR}${PREFIX}/usr/share/doc
-	install -Dm755 bin/qe "${DESTDIR}${PREFIX}/usr/bin/qe"
+	install -Dm755 src/qe.py "${DESTDIR}${PREFIX}/usr/bin/qe"
 	install -Dm644 README.rst "${DESTDIR}${PREFIX}/usr/share/doc/qe"
 
 uninstall: 
