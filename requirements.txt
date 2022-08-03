@@ -1,3 +1,2 @@
 rich
 backports.pbkdf2
-pyinstaller
